@@ -7,47 +7,85 @@ import { useEffect, useState } from "react";
 const sample = {
   status: 1,
   message: "successful",
-  sys_time: "2023-07-05 0:18:14",
-  curr_time: "2023-07-05 00:18:14",
+  sys_time: "2023-07-05 3:48:23",
+  curr_time: "2023-07-05 03:48:23",
   data: {
-    "TKL-LHP": {
-      curr_time: "2023-07-05 00:18:14",
-      sys_time: "2023-07-05 0:18:14",
-      DOWN: [
+    "TKL-TIK": {
+      curr_time: "2023-07-05 03:48:23",
+      sys_time: "2023-07-05 3:48:23",
+      UP: [
         {
-          ttnt: "159",
+          ttnt: "147",
           valid: "Y",
-          plat: "2",
-          time: "2023-07-05 05:57:00",
+          plat: "3",
+          time: "2023-07-05 06:15:00",
           source: "-",
-          dest: "TIK",
+          dest: "POA",
           seq: "1",
         },
         {
-          ttnt: "168",
+          ttnt: "151",
           valid: "Y",
-          plat: "2",
-          time: "2023-07-05 06:06:00",
+          plat: "3",
+          time: "2023-07-05 06:18:00",
           source: "-",
-          dest: "TIK",
+          dest: "LHP",
           seq: "2",
         },
         {
-          ttnt: "181",
+          ttnt: "155",
           valid: "Y",
-          plat: "2",
-          time: "2023-07-05 06:18:00",
+          plat: "3",
+          time: "2023-07-05 06:22:00",
           source: "-",
-          dest: "TIK",
+          dest: "POA",
           seq: "3",
         },
         {
-          ttnt: "192",
+          ttnt: "161",
           valid: "Y",
-          plat: "2",
-          time: "2023-07-05 06:30:00",
+          plat: "3",
+          time: "2023-07-05 06:28:00",
           source: "-",
-          dest: "TIK",
+          dest: "POA",
+          seq: "4",
+        },
+      ],
+      DOWN: [
+        {
+          ttnt: "138",
+          valid: "Y",
+          plat: "4",
+          time: "2023-07-05 06:05:00",
+          source: "-",
+          dest: "NOP",
+          seq: "1",
+        },
+        {
+          ttnt: "142",
+          valid: "Y",
+          plat: "4",
+          time: "2023-07-05 06:09:00",
+          source: "-",
+          dest: "NOP",
+          seq: "2",
+        },
+        {
+          ttnt: "146",
+          valid: "Y",
+          plat: "4",
+          time: "2023-07-05 06:14:00",
+          source: "-",
+          dest: "NOP",
+          seq: "3",
+        },
+        {
+          ttnt: "150",
+          valid: "Y",
+          plat: "4",
+          time: "2023-07-05 06:17:00",
+          source: "-",
+          dest: "NOP",
           seq: "4",
         },
       ],
@@ -58,7 +96,9 @@ const sample = {
 
 export default function Page() {
   const [nextTrainDataA, setNextTrainDataA] = useState<any>([]);
-  const nextTrainData = sample.data["TKL-LHP"].DOWN;
+  const nextTrainData = sample.data["TKL-TIK"].UP.filter(
+    (train: any) => train.dest == "LHP"
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [loaded, setLoaded] = useState<boolean>(false);
 
@@ -67,11 +107,14 @@ export default function Page() {
   }, []);
   function fetchNextTrainData() {
     fetch(
-      "https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=LHP"
+      "https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=TIK"
     )
       .then((response) => response.json())
       .then((data) => {
-        setNextTrainDataA(data.data["TKL-LHP"].DOWN);
+        console.log(data);
+        setNextTrainDataA(
+          data.data["TKL-TIK"].UP.filter((train: any) => train.dest == "LHP")
+        );
       });
     // setNextTrainDataA(nextTrainData);
     setLoading(false);
@@ -86,18 +129,6 @@ export default function Page() {
     const dataHour = parseInt(dataTime.split(" ")[1].split(":")[0]);
     const dataMin = parseInt(dataTime.split(" ")[1].split(":")[1]);
     const dataSec = parseInt(dataTime.split(" ")[1].split(":")[2]);
-
-    // result = formatDistanceToNowStrict(
-    //   new Date(
-    //     dataYear,
-    //     dataMonth - 1,
-    //     dataDate,
-    //     dataHour,
-    //     dataMin,
-    //     dataSec - 50
-    //   ),
-    //   { addSuffix: true, unit: "minute" }
-    // );
     result = new Date(
       dataYear,
       dataMonth - 1,
@@ -110,12 +141,12 @@ export default function Page() {
   }
 
   return (
-    <main className="flex h-screen flex-col items-center ">
+    <main className="flex h-screen flex-col items-center">
       <Link
         className="flex items-center justify-center align-middle text-xl font-bold text-center border-b-2 w-full border-neutral-400	h-16"
-        href={"/backToLP"}
+        href={"/"}
       >
-        LP go out 🏃🏻‍♂️💨
+        🏃🏻‍♂️💨 LP go BACK
       </Link>
       <div className="p-16">
         {!loading ? (
@@ -125,7 +156,7 @@ export default function Page() {
                 key={i}
                 className="flex flex-col items-center justify-center"
               >
-                <h2 className="text-2xl font-bold text-center my-1">
+                <h2 className="text-2xl font-bold text-center">
                   <TimeCounter targetDate={convertDataTime(train.time)} />
                 </h2>
               </div>
