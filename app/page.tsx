@@ -1,4 +1,6 @@
 "use client";
+import GoIn from "@/lib/GoIn";
+import GoOut from "@/lib/GoOut";
 import TimeCounter from "@/lib/TimeCounter";
 import Image from "next/image";
 import Link from "next/link";
@@ -57,75 +59,25 @@ const sample = {
 };
 
 export default function Page() {
-  const [nextTrainDataA, setNextTrainDataA] = useState<any>([]);
-  const nextTrainData = sample.data["TKL-LHP"].DOWN;
-  const [loading, setLoading] = useState<boolean>(true);
-  const [loaded, setLoaded] = useState<boolean>(false);
-
-  useEffect(() => {
-    fetchNextTrainData();
-  }, []);
-  function fetchNextTrainData() {
-    fetch(
-      "https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=LHP"
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        setNextTrainDataA(data.data["TKL-LHP"].DOWN);
-      });
-    // setNextTrainDataA(nextTrainData);
-    setLoading(false);
-    setLoaded(true);
-    console.log("fetch");
-  }
-  function convertDataTime(dataTime: string) {
-    var result;
-    const dataYear = parseInt(dataTime.split(" ")[0].split("-")[0]);
-    const dataMonth = parseInt(dataTime.split(" ")[0].split("-")[1]);
-    const dataDate = parseInt(dataTime.split(" ")[0].split("-")[2]);
-    const dataHour = parseInt(dataTime.split(" ")[1].split(":")[0]);
-    const dataMin = parseInt(dataTime.split(" ")[1].split(":")[1]);
-    const dataSec = parseInt(dataTime.split(" ")[1].split(":")[2]);
-
-    // result = formatDistanceToNowStrict(
-    //   new Date(
-    //     dataYear,
-    //     dataMonth - 1,
-    //     dataDate,
-    //     dataHour,
-    //     dataMin,
-    //     dataSec - 50
-    //   ),
-    //   { addSuffix: true, unit: "minute" }
-    // );
-    result = new Date(
-      dataYear,
-      dataMonth - 1,
-      dataDate,
-      dataHour,
-      dataMin,
-      dataSec - 50
-    );
-    return result;
-  }
+  const [goOut, setGoOut] = useState<any>(true);
 
   return (
     <main className="flex h-screen flex-col items-center ">
-      <Link
+      <button
+        onClick={() => setGoOut(!goOut)}
         className="flex items-center justify-center align-middle text-xl font-bold text-center border-b-2 w-full border-neutral-400	h-16"
-        href={"/backToLP"}
       >
-        LP go out 🏃🏻‍♂️💨
-      </Link>
-      <div className="p-16">
+        {goOut ? "LP go out 🏃🏻‍♂️💨" : "🏃🏻‍♂️💨 go in LP "}
+      </button>
+      {/* <div className="m-8">
         {!loading ? (
           nextTrainDataA.map((train: any, i: number) => {
             return (
               <div
                 key={i}
-                className="flex flex-col items-center justify-center"
+                className="flex flex-col items-center justify-center my-5"
               >
-                <h2 className="text-2xl font-bold text-center my-1">
+                <h2 className="text-2xl font-bold text-center ">
                   <TimeCounter targetDate={convertDataTime(train.time)} />
                 </h2>
               </div>
@@ -162,7 +114,8 @@ export default function Page() {
             d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
           />
         </svg>
-      </button>
+      </button> */}
+      {goOut ? <GoOut /> : <GoIn />}
     </main>
   );
 }

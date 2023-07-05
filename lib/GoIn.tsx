@@ -94,7 +94,7 @@ const sample = {
   isdelay: "N",
 };
 
-export default function Page() {
+export default function GoIn() {
   const [nextTrainDataA, setNextTrainDataA] = useState<any>([]);
   const nextTrainData = sample.data["TKL-TIK"].UP.filter(
     (train: any) => train.dest == "LHP"
@@ -105,6 +105,11 @@ export default function Page() {
   useEffect(() => {
     fetchNextTrainData();
   }, []);
+
+  setInterval(() => {
+    fetchNextTrainData();
+  }, 120000);
+
   function fetchNextTrainData() {
     fetch(
       "https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=TIK"
@@ -119,10 +124,13 @@ export default function Page() {
         );
       });
     // setNextTrainDataA(nextTrainData);
-    setLoading(false);
-    setLoaded(true);
+    setTimeout(() => {
+      setLoading(false);
+      setLoaded(true);
+    }, 1000);
     console.log("fetch");
   }
+
   function convertDataTime(dataTime: string) {
     var result;
     const dataYear = parseInt(dataTime.split(" ")[0].split("-")[0]);
@@ -143,13 +151,7 @@ export default function Page() {
   }
 
   return (
-    <main className="flex h-screen flex-col items-center">
-      <Link
-        className="flex items-center justify-center align-middle text-xl font-bold text-center border-b-2 w-full border-neutral-400	h-16"
-        href={"/"}
-      >
-        🏃🏻‍♂️💨 LP go BACK
-      </Link>
+    <>
       <div className="m-8">
         {!loading ? (
           nextTrainDataA.map((train: any, i: number) => {
@@ -196,6 +198,6 @@ export default function Page() {
           />
         </svg>
       </button>
-    </main>
+    </>
   );
 }

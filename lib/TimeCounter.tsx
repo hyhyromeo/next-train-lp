@@ -37,10 +37,14 @@ export default function TimeCounter({ targetDate }: timeCounterProps) {
     // Clean up the interval when the component is unmounted
     return () => clearInterval(interval);
   }, [targetDate]);
+
   return (
-    <div>
+    <div className="">
       {timeLeft.minutes == 0 && timeLeft.hours == 0 && timeLeft.seconds == 0 ? (
-        "-"
+        <div className="flex flex-col my-3">
+          <span className=" w-40">👋🏻</span>
+          <span className=" w-40">Gone~</span>
+        </div>
       ) : (
         <div className="flex flex-col">
           <span className=" w-40">🚇</span>

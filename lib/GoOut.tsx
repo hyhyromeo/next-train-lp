@@ -3,6 +3,8 @@ import TimeCounter from "@/lib/TimeCounter";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { convertDataTime } from "./ConvertDataTime";
+import { set } from "date-fns";
 
 const sample = {
   status: 1,
@@ -94,62 +96,38 @@ const sample = {
   isdelay: "N",
 };
 
-export default function Page() {
+export default function GoOut() {
   const [nextTrainDataA, setNextTrainDataA] = useState<any>([]);
-  const nextTrainData = sample.data["TKL-TIK"].UP.filter(
-    (train: any) => train.dest == "LHP"
-  );
+  // const nextTrainData = sample.data["TKL-LHP"].DOWN;
   const [loading, setLoading] = useState<boolean>(true);
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     fetchNextTrainData();
   }, []);
+
+  setInterval(() => {
+    fetchNextTrainData();
+  }, 120000);
+
   function fetchNextTrainData() {
     fetch(
-      "https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=TIK"
+      "https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=LHP"
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log(
-          data.data["TKL-TIK"].UP.filter((train: any) => train.dest == "LHP")
-        );
-        setNextTrainDataA(
-          data.data["TKL-TIK"].UP.filter((train: any) => train.dest == "LHP")
-        );
+        setNextTrainDataA(data.data["TKL-LHP"].DOWN);
       });
     // setNextTrainDataA(nextTrainData);
-    setLoading(false);
-    setLoaded(true);
+    setTimeout(() => {
+      setLoading(false);
+      setLoaded(true);
+    }, 1000);
     console.log("fetch");
-  }
-  function convertDataTime(dataTime: string) {
-    var result;
-    const dataYear = parseInt(dataTime.split(" ")[0].split("-")[0]);
-    const dataMonth = parseInt(dataTime.split(" ")[0].split("-")[1]);
-    const dataDate = parseInt(dataTime.split(" ")[0].split("-")[2]);
-    const dataHour = parseInt(dataTime.split(" ")[1].split(":")[0]);
-    const dataMin = parseInt(dataTime.split(" ")[1].split(":")[1]);
-    const dataSec = parseInt(dataTime.split(" ")[1].split(":")[2]);
-    result = new Date(
-      dataYear,
-      dataMonth - 1,
-      dataDate,
-      dataHour,
-      dataMin + 3,
-      dataSec - 50
-    );
-    return result;
   }
 
   return (
-    <main className="flex h-screen flex-col items-center">
-      <Link
-        className="flex items-center justify-center align-middle text-xl font-bold text-center border-b-2 w-full border-neutral-400	h-16"
-        href={"/"}
-      >
-        🏃🏻‍♂️💨 LP go BACK
-      </Link>
+    <>
       <div className="m-8">
         {!loading ? (
           nextTrainDataA.map((train: any, i: number) => {
@@ -158,7 +136,7 @@ export default function Page() {
                 key={i}
                 className="flex flex-col items-center justify-center my-5"
               >
-                <h2 className="text-2xl font-bold text-center">
+                <h2 className="text-2xl font-bold text-center ">
                   <TimeCounter targetDate={convertDataTime(train.time)} />
                 </h2>
               </div>
@@ -196,6 +174,6 @@ export default function Page() {
           />
         </svg>
       </button>
-    </main>
+    </>
   );
 }
