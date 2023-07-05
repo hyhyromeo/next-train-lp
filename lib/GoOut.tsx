@@ -116,6 +116,7 @@ export default function GoOut() {
     )
       .then((response) => response.json())
       .then((data) => {
+        console.log(data.data["TKL-LHP"].DOWN);
         setNextTrainDataA(data.data["TKL-LHP"].DOWN);
       });
     // setNextTrainDataA(nextTrainData);
