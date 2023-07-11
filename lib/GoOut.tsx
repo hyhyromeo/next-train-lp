@@ -103,14 +103,18 @@ export default function GoOut() {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
+    getData();
     fetchNextTrainData();
   }, []);
 
-  setInterval(() => {
-    fetchNextTrainData();
-  }, 120000);
+  // const myInterval = setInterval(fetchNextTrainData, 10000);
 
   function fetchNextTrainData() {
+    setInterval(() => {
+      getData();
+    }, 60000);
+  }
+  function getData() {
     fetch(
       "https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=TKL&sta=LHP"
     )
@@ -126,7 +130,6 @@ export default function GoOut() {
     }, 1000);
     console.log("fetch");
   }
-
   return (
     <>
       <div className="m-8">
@@ -138,7 +141,8 @@ export default function GoOut() {
                 className="flex flex-col items-center justify-center my-5"
               >
                 <h2 className="text-2xl font-bold text-center ">
-                  <TimeCounter targetDate={convertDataTime(train.time)} />
+                  <TimeCounter targetDate={train.ttnt} />
+                  {/* <TimeCounter targetDate={convertDataTime(train.time)} /> */}
                 </h2>
               </div>
             );
@@ -159,7 +163,7 @@ export default function GoOut() {
         )}
       </div>
 
-      <button onClick={() => fetchNextTrainData()}>
+      <button onClick={() => getData()}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

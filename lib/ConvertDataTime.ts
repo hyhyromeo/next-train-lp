@@ -11,7 +11,7 @@ export function convertDataTime(dataTime: string) {
     dataMonth - 1,
     dataDate,
     dataHour,
-    dataMin + 2,
+    dataMin + 3,
     dataSec - 50
   );
   return result;
